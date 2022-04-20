@@ -1,24 +1,65 @@
-# Lumen PHP Framework
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel/lumen-framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://img.shields.io/packagist/v/laravel/lumen-framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://img.shields.io/packagist/l/laravel/lumen)](https://packagist.org/packages/laravel/lumen-framework)
+<h1>SMS Gateway Lumen & Gammu</h1>
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+Ini adalah contoh backend service untuk mengirim SMS dengan memanfaatkan SMS Daemon dari [Gammu](https://wammu.eu/gammu/).
+Pelajari lebih lanjut tentang SMS Daemon GAMMU [DI SINI](https://docs.gammu.org/smsd/).
 
-## Official Documentation
+**Instalasi**
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+Proses instalasi sama seperti clone projec Laravel/Lumen umumnya:
+- clone project <code>git clone</code>
+- update pengaturan database di dalam file .env
+- <code>composer install</code>
+- <code>php artisan migrate</code>
 
-## Contributing
+**Penggunaan**
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Lakukan request berupa POST berisi field **destination** dan **msg**
 
-## Security Vulnerabilities
+Contoh:
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+**Menggunakan cUrl**
 
-## License
+````
+<?php
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+curl --request POST \
+--url http://localhost:8000/ \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data destination=087779537772 \
+--data msg=coba
+</code>
+````
+
+
+**Menggunakan PHP cUrl**
+
+````
+$curl = curl_init();
+
+curl_setopt_array($curl, [
+CURLOPT_PORT => "8000",
+CURLOPT_URL => "http://localhost:8000/",
+CURLOPT_RETURNTRANSFER => true,
+CURLOPT_ENCODING => "",
+CURLOPT_MAXREDIRS => 10,
+CURLOPT_TIMEOUT => 30,
+CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+CURLOPT_CUSTOMREQUEST => "POST",
+CURLOPT_POSTFIELDS => "destination=087779537772&msg=coba",
+CURLOPT_HTTPHEADER => [
+"Content-Type: application/x-www-form-urlencoded"
+],
+]);
+
+$response = curl_exec($curl);
+$err = curl_error($curl);
+
+curl_close($curl);
+
+if ($err) {
+echo "cURL Error #:" . $err;
+} else {
+echo $response;
+}
+

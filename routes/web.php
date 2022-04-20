@@ -13,6 +13,30 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+use Illuminate\Support\Facades\DB;
+
+$router->get('/', function () {
+    return [
+      'modem' => DB::table('phones')->get(['ID','UpdatedInDB','Signal','Sent']),
+      'outbox' => DB::table('outbox')->get(['InsertIntoDB','DestinationNumber','TextDecoded','SenderID','Status'])
+    ];
+});
+
+
+$router->post('/', function (){
+    $sender = DB::table('phones')->inRandomOrder()->first();
+
+    if (!$sender)
+        return ['status'=>'fail','msg'=>'tidak ada sender tersedia'];
+
+    DB::table('outbox')->insert([
+        'DestinationNumber' => request('destination'),
+        'TextDecoded' => request('msg'),
+        'SenderID' => $sender->ID,
+        'CreatorID' => 'gammu'
+    ]);
+
+    return ['status'=>'success','msg'=>'pesan berhasil disimpan'];
+
+
 });
